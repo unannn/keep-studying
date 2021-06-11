@@ -19,11 +19,11 @@ class Joystick:
 
         first_event = self.sh_joystick.stick.wait_for_event(emptybuffer=True)
         print("1 : The joystick was {} {}".format(first_event.action, first_event.direction))
-        sleep(0.1)
-        second_event = self.sh_joystick.stick.wait_for_event(emptybuffer=True)
-        print("2 : The joystick was {} {}".format(second_event.action, second_event.direction))
+        # sleep(0.1)
+        # second_event = self.sh_joystick.stick.wait_for_event(emptybuffer=True)
+        # print("2 : The joystick was {} {}".format(second_event.action, second_event.direction))
 
-        if (first_event.action == "pressed" and second_event.action == "released"):
+        if (first_event.action == "pressed"):
             return first_event.direction
         
         if first_event.action == "held":

@@ -16,7 +16,7 @@ class SHMatrix:
 
         for i in range(today_study_number):
             m[i] = [0,102,254]
-        print(m)
+
         return m
     
     def print_number(self,minute):       
@@ -78,7 +78,7 @@ class SHMatrix:
             self.sh_matrix.set_pixels(m)
 
     def print_complete(self):
-        self.sh_matrix.show_message("Study complete!! Congratulation~!~!", text_colour=[255, 0, 0])
+        self.sh_matrix.show_message("Study complete!! Congratulation~!~!", text_colour=[255, 0, 0],scroll_speed=0.06)
 
     def clear_screen(self):
         self.sh_matrix.clear()

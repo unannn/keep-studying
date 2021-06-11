@@ -10,20 +10,18 @@ from flow import enum
 class ServiceFlow:
     
     def __init__(self):
+        
         self.sh_matrix = matrix.SHMatrix()
         self.sh_joystick = joystick.Joystick()
         self.sh_acceleration = acceleration.Acceleration()
-        self.s = database.StudyDataDB()
         self.sleep_detection = sleepDetection.SleepDetection()
 
-        self.jia = 2 #차감 시간 (원래 60초)
+        self.cycle = 2 #차감 시간 (원래 60초)
 
     def set_studyTime(self):      
         
-        self.s.select()
-        
         error = None
-        minute = 60
+        minute = 1
         self.sh_matrix.print_number(minute)
         while True:
 
@@ -61,6 +59,8 @@ class ServiceFlow:
             print(minute)
             time.sleep(1)
 
+        self.sh_matrix.print_next()
+        
         while minute > 0:
             
             self.sh_matrix.print_number(minute)
@@ -69,32 +69,39 @@ class ServiceFlow:
             elapsed_time = time.time() - start_time
             ten_second_count = 0
             
-            while elapsed_time < self.jia:
+            while elapsed_time < self.cycle:
+                
                 print("시간 : %s" %elapsed_time)
                 
                 sleep(1)
                 elapsed_time = time.time() - start_time
                 
-                joystick_event_direction = None
-                e = self.sh_joystick.get_current_events()
-                if len(e) > 0:
-                    joystick_event_direction = e[0].direction
+                joystick_direction = None
+                joystick_events = self.sh_joystick.get_current_events()
+                if len(joystick_events) > 0:
+                    joystick_direction = joystick_events[0].direction
                 
+                print("조이스틱")
                 #조이스틱 감지
-                if joystick_event_direction == "up":                    
+                if joystick_direction == "up":                    
                     return enum.State.STUDY_STOPED_USER, minute
+                
+                print("기기움직임")
 
                 #기기움직임 감지
                 if self.sh_acceleration.is_moved():
                     return enum.State.STUDY_STOPED_MOVEMENT, minute
 
+                print("집중력저하")
                 #집중력 저하 감지
                 detect = self.sleep_detection.is_sleepiness_or_absense()
                 if detect != enum.State.STUDYING:
-                    return detect.minute
+                    print(detect,min)
+                    return detect, minute
                 
+                print("단위초메트릭스")
 
-                if int(elapsed_time / 7.5 )  > ten_second_count:
+                if int(elapsed_time / (self.cycle/ 8) )  > ten_second_count:
                     self.sh_matrix.set_pixel_red(7 - ten_second_count,0)
                     ten_second_count += 1
                
@@ -114,10 +121,13 @@ class ServiceFlow:
         
         if puase_case == enum.State.STUDY_STOPED_MOVEMENT:
             print("움직였음")
-        elif puase_case == enum.State.STUDY_STOPED_CONCENTRATION:
-            print("집중못함")
+        elif puase_case ==  enum.State.STUDY_STOPED_ABSENSE:
+            print("부재로인한 정지")
+        elif pause_case ==  enum.State.STUDY_STOPED_SLEEPINESS:
+            print("졸음으로 인한 정지")
         else:
             print("임의정지")
+
         sleep(1)
 
         #공부 정지, 재시작 선택 출력과 기다리기

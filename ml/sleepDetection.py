@@ -5,7 +5,8 @@ import cv2
 from picamera import PiCamera
 from time import sleep
 import time
-import math 
+import math
+import os 
 
 from flow import enum
 
@@ -14,33 +15,47 @@ class SleepDetection:
     def __init__(self):
         print("init")
         self.image_number = 0    
-        self.detector = dlib.get_frontal_face_detector() 
-        self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+        self.detector = dlib.get_frontal_face_detector()
+        print(os.path.dirname(os.path.realpath(__file__)))
+        self.predictor = dlib.shape_predictor(f"{os.path.dirname(os.path.realpath(__file__))}/shape_predictor_68_face_landmarks.dat")
         self.current_eye_state = []
         self.user_absence_count = 0 
 
     def is_sleepiness_or_absense(self):
 
+        print("is_sleepiness_or_absense 들어몸")
         self.capture_image()
+        print("사진찍음")
         current_eye_landmark = self.get_eye_landmark()
+        print("랜드마크 얻음")
         
-        #자리비움 감지
+        #자리비움 감지(10회 검사에도 얼굴인식 안될 경우 부재라고 판단)
         if len(current_eye_landmark) == 0:
-            self.user_absence_count += 1
-            if self.user_absence_count > 10:
-                return enum.State.STUDY_STOPED_ABSENSE
+            
+            self.user_absence_count += 1  
 
-        if self.get_EAR(current_eye_landmark) < 0.21: #눈감음
+            if self.user_absence_count > 10:
+                print("자리비움")
+                self.current_eye_state.clear()
+                return enum.State.STUDY_STOPED_ABSENSE          
+            
+            print("아직공부중")
+
+            return enum.State.STUDYING
+      
+
+        if self.get_EAR(current_eye_landmark) < 0.21: #눈감을 때 마다 스택에 추가
             self.current_eye_state.insert(0,True)
         else:
             self.current_eye_state.insert(0,False)
 
 
-        if len(self.current_eye_state) > 5:
+        if len(self.current_eye_state) > 7:
             self.current_eye_state.pop()
             
             #졸음감지
-            if self.count_eye_state() > 3:
+            if self.count_eye_state() > 5:
+                self.current_eye_state.clear()
                 return enum.State.STUDY_STOPED_SLEEPINESS
 
         return enum.State.STUDYING
@@ -55,7 +70,7 @@ class SleepDetection:
         #sleep(3)
         #camera.rotation = 180
 
-        camera.capture(f'./image/detection_image.jpg')
+        camera.capture(f'{os.getcwd()}/image/detection_image.jpg')
                 
 
         if self.image_number > 6:
@@ -66,9 +81,12 @@ class SleepDetection:
     
     def get_eye_landmark(self):
         
-        photo = cv2.imread(f'./image/detection_image.jpg')
+        photo = cv2.imread(f'{os.getcwd()}/image/detection_image.jpg')
         detect = self.detector(photo,1)
-        if detect:#사람없음
+        print("detect:",detect)
+        print("detect-length:",len(detect))
+
+        if len(detect) == 0:#사람없음
             return []
 
         shape = self.predictor(photo,detect[0])
