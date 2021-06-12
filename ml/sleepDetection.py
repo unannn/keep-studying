@@ -16,14 +16,19 @@ class SleepDetection:
         print("init")
         self.image_number = 0    
         self.detector = dlib.get_frontal_face_detector()
-        print(os.path.dirname(os.path.realpath(__file__)))
-        self.predictor = dlib.shape_predictor(f"{os.path.dirname(os.path.realpath(__file__))}/shape_predictor_68_face_landmarks.dat")
+        self.t = time.time()
+        self.predictor = None
+        print(f"모델 로딩 시간 : {time.time() - self.t}")
         self.current_eye_state = []
         self.user_absence_count = 0 
 
+    def get_learning_model(self):
+        self.predictor = dlib.shape_predictor(f"{os.path.dirname(os.path.realpath(__file__))}/shape_predictor_68_face_landmarks.dat")
+        print("모델 불러오기 완료")
+
     def is_sleepiness_or_absense(self):
 
-        print("is_sleepiness_or_absense 들어몸")
+        print(self.current_eye_state)
         self.capture_image()
         print("사진찍음")
         current_eye_landmark = self.get_eye_landmark()
@@ -35,8 +40,10 @@ class SleepDetection:
             self.user_absence_count += 1  
 
             if self.user_absence_count > 10:
-                print("자리비움")
+
+                self.user_absence_count = 0
                 self.current_eye_state.clear()
+                
                 return enum.State.STUDY_STOPED_ABSENSE          
             
             print("아직공부중")
@@ -50,12 +57,15 @@ class SleepDetection:
             self.current_eye_state.insert(0,False)
 
 
-        if len(self.current_eye_state) > 7:
+        if len(self.current_eye_state) > 5:
             self.current_eye_state.pop()
             
             #졸음감지
-            if self.count_eye_state() > 5:
+            if self.count_eye_state() > 3:
+                
+                self.user_absence_count = 0
                 self.current_eye_state.clear()
+
                 return enum.State.STUDY_STOPED_SLEEPINESS
 
         return enum.State.STUDYING

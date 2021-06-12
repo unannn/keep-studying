@@ -1,5 +1,6 @@
 import time
 from time import sleep
+import threading
 
 from senseHatControl import acceleration,matrix,joystick
 
@@ -20,8 +21,15 @@ class ServiceFlow:
 
     def set_studyTime(self):      
         
+        model_catch = threading.Thread(target = self.sleep_detection.get_learning_model)
+        # 스레드 시작.
+        print("시작 전")
+        model_catch.start()
+        print("시작 후")
+
         error = None
-        minute = 1
+        minute = 30
+
         self.sh_matrix.print_number(minute)
         while True:
 
@@ -102,10 +110,9 @@ class ServiceFlow:
                 print("단위초메트릭스")
 
                 if int(elapsed_time / (self.cycle/ 8) )  > ten_second_count:
-                    self.sh_matrix.set_pixel_red(7 - ten_second_count,0)
+                    self.sh_matrix.set_pixel_red(7 - ten_second_count,1)
                     ten_second_count += 1
-               
-
+        
             minute -= 1
 
         return enum.State.STUDY_COMPLETE, minute
@@ -116,30 +123,41 @@ class ServiceFlow:
         #오늘 공부시간 추가
         database.StudyDataDB().insert(1)
 
-    def pause_study(self,puase_case):
+    def pause_study(self,pause_case):
         # 정지사유에 출력
         
-        if puase_case == enum.State.STUDY_STOPED_MOVEMENT:
-            print("움직였음")
-        elif puase_case ==  enum.State.STUDY_STOPED_ABSENSE:
-            print("부재로인한 정지")
+        if pause_case == enum.State.STUDY_STOPED_MOVEMENT:
+            self.sh_matrix.print_moved()
+        elif pause_case ==  enum.State.STUDY_STOPED_ABSENSE:
+            self.sh_matrix.print_absence()
         elif pause_case ==  enum.State.STUDY_STOPED_SLEEPINESS:
-            print("졸음으로 인한 정지")
+            self.sh_matrix.print_sleep()
         else:
             print("임의정지")
 
         sleep(1)
 
         #공부 정지, 재시작 선택 출력과 기다리기
+
+        
         print("재시작이면 ↑, 종료면 ←")
         while True:
 
-            direction = self.sh_joystick.get_joystick_direction()
+            self.sh_matrix.print_continue_guide()
+            sleep(1.5)
+
+            joystick_direction = None
+            joystick_events = self.sh_joystick.get_current_events()
+            if len(joystick_events) > 0:
+                joystick_direction = joystick_events[0].direction
             
-            if direction == "up":
+            if joystick_direction == "up":
                 return enum.State.STUDYING 
-            elif direction == "left":
+            elif joystick_direction == "left":
                 return enum.State.STUDY_END
+            
+            self.sh_matrix.print_end_guide()
+            sleep(1.5)
             
 
     def print_count(self,second):

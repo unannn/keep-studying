@@ -70,7 +70,46 @@ class SHMatrix:
                     m[i + j* 8 + 1] = o
             self.sh_matrix.set_pixels(m)
             sleep(0.03)
-            
+    
+    def print_continue_guide(self):
+        
+        x = (0,0,0)
+        a = (250,0,40)
+        l = (40,250,0)
+        
+        m = [ 
+            x,x,a,x,x,x,x,x,
+            x,a,a,a,x,x,x,x,
+            a,x,a,x,a,x,x,x,
+            x,x,a,l,x,l,l,x,
+            x,x,a,l,l,x,x,l,
+            x,x,a,l,x,x,x,x,
+            x,x,a,l,x,x,x,x,
+            x,x,a,l,x,x,x,x
+        ]
+        
+        self.sh_matrix.set_pixels(m)
+       
+    
+    def print_end_guide(self):
+             
+        x = (0,0,0)
+        a = (250,0,40)
+        l = (40,250,0)
+    
+        m = [ 
+            x,x,a,x,x,x,x,x,
+            x,a,x,x,x,x,x,x,
+            a,a,a,a,a,a,a,a,
+            x,a,x,x,l,l,l,x,
+            x,x,a,l,x,x,x,l,
+            x,x,x,l,l,l,l,l,
+            x,x,x,l,x,x,x,x,
+            x,x,x,x,l,l,l,l
+        ]
+        
+        self.sh_matrix.set_pixels(m)
+
     def print_matrix(matrix,state):
         if state == enum.State.TIME_SETTING or state == enum.State.STUDYING:
             print("hi")
@@ -82,24 +121,220 @@ class SHMatrix:
 
     def clear_screen(self):
         self.sh_matrix.clear()
+    
+    
+    def print_moved(self):
         
+        x = (0,0,0)
 
+        l = (255,255,0)
+        r = (250,0,40)
+        b = (40,250,0)
 
-'''
-X = [255, 0, 0]  # Red
-O = [255, 255, 255]  # White
+        m = [       
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,l,l,x,l,x,x,x,
+                    x,l,x,l,x,l,x,x,
+                    x,l,x,l,x,l,x,x,
+                    x,l,x,l,x,l,x,x,
+                    x,l,x,l,x,l,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,x,l,l,l,x,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,x,l,x,l,x,x,x,
+                    x,x,l,x,l,x,x,x,
+                    x,x,l,l,x,x,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,x,l,l,l,l,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,x,x,x,x,l,x,x,
+                    x,x,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x
+                ]
+        ]
 
-question_mark = [
-O, O, O, X, X, O, O, O,
-O, O, X, O, O, X, O, O,
-O, O, O, O, O, X, O, O,
-O, O, O, O, X, O, O, O,
-O, O, O, X, O, O, O, O,
-O, O, O, X, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, X, O, O, O, O
-]
+        for i in range(5):
+            self.sh_matrix.set_pixels(m[i])
+            sleep(1)
+            
+    def print_absence(self):
+        x = (0,0,0)
 
-sense.set_pixels(question_mark)
-'''
+        l = (255,255,0)
+        r = (250,0,40)
+        b = (40,250,0)
+
+        m = [       
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,x,l,l,x,l,x,x,
+                    x,l,x,x,l,l,x,x,
+                    x,l,x,x,l,l,x,x,
+                    x,l,x,x,l,l,x,x,
+                    x,x,l,l,x,l,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,l,x,x,x,x,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,x,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,x,l,l,l,l,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,l,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,l,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,x,l,l,l,x,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,x,l,l,l,l,x,x
+                ]
+        ]
+
+        for i in range(7):
+            self.sh_matrix.set_pixels(m[i])
+            sleep(1)
+
+    
+    def print_sleep(self):
+
+        x = (0,0,0)
+
+        l = (255,255,0)
+        r = (250,0,40)
+        b = (40,250,0)
+        
+        m = [
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,x,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,x,l,x,x,x,x,x,
+                    x,x,l,x,x,x,x,x,
+                    x,x,l,x,x,x,x,x,
+                    x,x,l,x,x,x,x,x,
+                    x,x,l,x,x,x,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,x,l,l,l,l,x,x
+                ],
+                [ 
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    b,b,b,b,b,b,b,b,
+                    x,x,l,l,l,x,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,x,l,l,l,l,x,x
+                ],
+                [ 
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    r,r,r,r,r,r,r,r,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,l,x,x,
+                    x,l,l,l,l,l,x,x,
+                    x,l,x,x,x,x,x,x,
+                    x,l,x,x,x,x,x,x
+                ]
+        ]
+
+        for i in range(5):
+            self.sh_matrix.set_pixels(m[i])
+            sleep(1)
 

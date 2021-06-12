@@ -10,6 +10,7 @@ clear_matrix.py
 opencv-test.py
 print_dot.py
 dlib-test.py
+matrix_test.py
 
 *.jpg
 *.png
